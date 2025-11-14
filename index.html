@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leadership Concepts with Nobita & Doraemon</title>
+    <style>
+        /* --- (CSS is unchanged) --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background-color: #fff9e6;
+            background-image:
+                radial-gradient(circle at 20% 30%, #ffeb99 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, #ffe6cc 0%, transparent 50%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px;
+            border: 4px solid #333;
+            border-radius: 0;
+            box-shadow: 8px 8px 0 #333;
+        }
+        .header h1 {
+            font-size: 2.2em;
+            color: #2c5aa0;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #555;
+            font-size: 1em;
+        }
+        .main-menu {
+            display: block;
+        }
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .concept-card {
+            background: white;
+            border: 3px solid #333;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 6px 6px 0 #333;
+            position: relative;
+        }
+        .concept-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0 #333;
+        }
+        .concept-card:active {
+            transform: translate(2px, 2px);
+            box-shadow: 4px 4px 0 #333;
+        }
+        .concept-number {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #ff6b6b;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 3px solid #333;
+        }
+        .concept-card h3 {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 12px;
+            margin-top: 10px;
+        }
+        .concept-card p {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        .learning-page {
+            display: none;
+            background: white;
+            border: 4px solid #333;
+            padding: 35px;
+            box-shadow: 8px 8px 0 #333;
+            cursor: pointer; 
+        }
+        .learning-page.active {
+            display: block;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #333;
+            cursor: default; 
+        }
+        .page-title {
+            font-size: 1.8em;
+            color: #2c5aa0;
+            font-weight: bold;
+        }
+        .back-btn {
+            background: #4a90e2;
+            color: white;
+            border: 3px solid #333;
+            padding: 10px 24px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            box-shadow: 4px 4px 0 #333;
+            transition: all 0.2s;
+        }
+        .back-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 #333;
+        }
+        .back-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #333;
+        }
+        .conversation {
+            margin-top: 25px;
+            min-height: 250px; 
+            cursor: default; 
+        }
+        .chat-bubble {
+            margin: 8px 0; /* tighter vertical spacing for denser text */
+            display: flex;
+            gap: 8px; /* reduced gap so avatar appears larger relative to text */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideIn 0.5s forwards;
+        }
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .chat-bubble.nobita {
+            justify-content: flex-start;
+        }
+        .chat-bubble.doraemon {
+            justify-content: flex-end;
+        }
+        .avatar {
+            width: 240px; 
+            height: 240px; 
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* crop when using cover */
+            position: relative;
+        }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* cover to eliminate transparent borders */
+            filter: drop-shadow(3px 3px 0 #333);
+        }
+        .nobita .message-box {
+            background: #fff5e6;
+        }
+        .doraemon .message-box {
+            background: #e6f3ff;
+        }
+        .speaker-name {
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #333;
+            font-size: 1.12em;
+        }
+        .message-box {
+            background: white;
+            border: 3px solid #333; /* restored border */
+            padding: 6px 8px; /* reduced padding for denser layout */
+            max-width: 70%;
+            box-shadow: 4px 4px 0 #333; /* restored solid shadow */
+            position: relative;
+            cursor: pointer; /* show users they can click messages to continue */
+        }
+
+        .message-text {
+            color: #444;
+            line-height: 1.5;
+            font-size: 1.12em; /* increased for readability */
+        }
+        .video-choice {
+            margin-top: 15px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .choice-btn {
+            background: #4ecdc4;
+            color: white;
+            border: 3px solid #333;
+            padding: 10px 22px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            box-shadow: 4px 4px 0 #333;
+            transition: all 0.2s;
+        }
+        .choice-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 #333;
+        }
+        .choice-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #333;
+        }
+        .choice-btn.no {
+            background: #ff6b6b;
+        }
+        
+        .navigation-btns {
+            display: flex;
+            justify-content: flex-start; 
+            align-items: center;
+            margin-top: 20px;
+            cursor: default; 
+        }
+        
+        .prev-btn {
+            background: #f0f0f0;
+            color: #555;
+            border: 3px solid #333;
+            padding: 12px 28px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            box-shadow: 4px 4px 0 #333;
+            transition: all 0.2s;
+        }
+        .prev-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 #333;
+        }
+        .prev-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #333;
+        }
+        .next-btn {
+            display: inline-block;
+        }
+        .next-btn.hidden, .prev-btn.hidden {
+            display: none;
+        }
+        .next-btn:disabled, .prev-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: 2px 2px 0 #333;
+            transform: translate(2px, 2px);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            cursor: default; 
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border: 4px solid #333;
+            padding: 25px;
+            max-width: 850px;
+            width: 100%;
+            box-shadow: 12px 12px 0 rgba(0,0,0,0.5);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.2em;
+        }
+        .close-modal {
+            background: #ff6b6b;
+            color: white;
+            border: 3px solid #333;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 3px 3px 0 #333;
+            transition: all 0.2s;
+        }
+        .close-modal:hover {
+            transform: scale(1.1);
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border: 3px solid #333;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.6em;
+            }
+            .concepts-grid {
+                grid-template-columns: 1fr;
+            }
+            .message-box {
+                max-width: 85%;
+            }
+            .chat-bubble {
+                gap: 10px;
+            }
+            .avatar {
+                width: 120px; 
+                height: 120px; 
+            }
+        }
+            /* When viewing a learning page (conversation), reduce avatar size so it doesn't dominate the layout */
+            .learning-page .avatar {
+                width: 140px;
+                height: 140px;
+            }
+
+            @media (max-width: 768px) {
+                .learning-page .avatar {
+                    width: 90px;
+                    height: 90px;
+                }
+            }
+
+        /* Large static side characters shown on main menu */
+        .side-character {
+            position: fixed;
+            bottom: 40px; /* partially off-screen */
+            width: 540px; /* larger visual size */
+            height: auto;
+            pointer-events: none;
+            z-index: 500;
+            filter: drop-shadow(6px 6px 0 #333);
+        }
+        .side-character.left {
+            left: 0;
+            transform: translateX(-10%);
+        }
+        .side-character.right {
+            right: 0;
+            transform: translateX(20%);
+        }
+        @media (max-width: 1100px) {
+            .side-character { display: none; }
+        }
+        /* Continue hint shown when conversation can advance */
+        .continue-hint {
+            position: absolute;
+            right: 18px;
+            bottom: 18px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            pointer-events: none;
+            display: none;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nobita's Leadership Journey</h1>
+            <p>Learn life skills with Nobita and Doraemon</p>
+        </div>
+
+        <div id="mainMenu" class="main-menu">
+            <div class="concepts-grid">
+                <div class="concept-card" onclick="showConcept('initiative')">
+                    <div class="concept-number">1</div>
+                    <h3>Taking Initiative</h3>
+                    <p>Learning to be proactive and take the first step without waiting for others</p>
+                </div>
+                <div class="concept-card" onclick="showConcept('perseverance')">
+                    <div class="concept-number">2</div>
+                    <h3>Perseverance</h3>
+                    <p>Building the strength to keep going even when things get difficult</p>
+                </div>
+                <div class="concept-card" onclick="showConcept('problemSolving')">
+                    <div class="concept-number">3</div>
+                    <h3>Problem Solving</h3>
+                    <p>Developing skills to tackle challenges with creative thinking</p>
+                </div>
+                <div class="concept-card" onclick="showConcept('consciousness')">
+                    <div class="concept-number">4</div>
+                    <h3>Consciousness</h3>
+                    <p>Being aware of yourself and understanding the impact of your actions</p>
+                </div>
+                <div class="concept-card" onclick="showConcept('innovativeness')">
+                    <div class="concept-number">5</div>
+                    <h3>Innovativeness</h3>
+                    <p>Finding new and better ways to approach problems and opportunities</p>
+                </div>
+            </div>
+        </div>
+
+    <!-- Large static characters visible on the main menu -->
+    <img src="nobita.png" alt="Nobita" class="side-character left" />
+    <img src="doraemon.png" alt="Doraemon" class="side-character right" />
+
+    <div id="initiativePage" class="learning-page">
+            <div class="page-header">
+                <div class="page-title">Taking Initiative</div>
+                <button class="back-btn" onclick="showMenu(); event.stopPropagation();">Back</button>
+            </div>
+            <div id="initiativeConv" class="conversation"></div>
+            <div class="navigation-btns">
+                <button id="initiativePrev" class="prev-btn hidden" onclick="prevMessage('initiative'); event.stopPropagation();">← Previous</button>
+            </div>
+            <div id="initiativeHint" class="continue-hint">Click or press Space to continue</div>
+        </div>
+
+        <div id="perseverancePage" class="learning-page">
+            <div class="page-header">
+                <div class="page-title">Perseverance</div>
+                <button class="back-btn" onclick="showMenu(); event.stopPropagation();">Back</button>
+            </div>
+            <div id="perseveranceConv" class="conversation"></div>
+            <div class="navigation-btns">
+                <button id="perseverancePrev" class="prev-btn hidden" onclick="prevMessage('perseverance'); event.stopPropagation();">← Previous</button>
+            </div>
+            <div id="perseveranceHint" class="continue-hint">Click or press Space to continue</div>
+        </div>
+
+        <div id="problemSolvingPage" class="learning-page">
+            <div class="page-header">
+                <div class="page-title">Problem Solving</div>
+                <button class="back-btn" onclick="showMenu(); event.stopPropagation();">Back</button>
+            </div>
+            <div id="problemSolvingConv" class="conversation"></div>
+            <div class="navigation-btns">
+                <button id="problemSolvingPrev" class="prev-btn hidden" onclick="prevMessage('problemSolving'); event.stopPropagation();">← Previous</button>
+            </div>
+            <div id="problemSolvingHint" class="continue-hint">Click or press Space to continue</div>
+        </div>
+
+        <div id="consciousnessPage" class="learning-page">
+            <div class="page-header">
+                <div class="page-title">Consciousness</div>
+                <button class="back-btn" onclick="showMenu(); event.stopPropagation();">Back</button>
+            </div>
+            <div id="consciousnessConv" class="conversation"></div>
+            <div class="navigation-btns">
+                <button id="consciousnessPrev" class="prev-btn hidden" onclick="prevMessage('consciousness'); event.stopPropagation();">← Previous</button>
+            </div>
+            <div id="consciousnessHint" class="continue-hint">Click or press Space to continue</div>
+        </div>
+
+        <div id="innovativenessPage" class="learning-page">
+            <div class="page-header">
+                <div class="page-title">Innovativeness</div>
+                <button class="back-btn" onclick="showMenu(); event.stopPropagation();">Back</button>
+            </div>
+            <div id="innovativenessConv" class="conversation"></div>
+            <div class="navigation-btns">
+                <button id="innovativenessPrev" class="prev-btn hidden" onclick="prevMessage('innovativeness'); event.stopPropagation();">← Previous</button>
+            </div>
+            <div id="innovativenessHint" class="continue-hint">Click or press Space to continue</div>
+        </div>
+
+    </div>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="videoTitle">Watch Video</div>
+                <button class="close-modal" onclick="closeVideo()">×</button>
+            </div>
+            <div class="video-container">
+                <iframe id="videoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Conversation data (Unchanged)
+        const conversations = {
+            initiative: [
+                {
+                    speaker: 'nobita',
+                    text: 'Doraemon, I always wait for someone to tell me what to do. How do people know when to start something on their own?'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'Taking initiative means being the person who acts first, Nobita. Instead of waiting for instructions, you see what needs to be done and you do it.'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'It\'s about being proactive and creating opportunities rather than waiting for them to come to you. Would you like to watch a video to learn more about taking initiative?',
+                    hasChoice: true,
+                    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', 
+                    videoTitle: 'Understanding Initiative'
+                }
+            ],
+            perseverance: [
+                {
+                    speaker: 'nobita',
+                    text: 'I give up so easily when things get hard. How do successful people keep going even when they want to quit?'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'Perseverance is continuing despite difficulties, Nobita. Everyone faces obstacles, but those who succeed are the ones who refuse to quit.'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'Remember, failure is just practice for success. Each time you fall down and get back up, you become stronger. Would you like to watch a video about perseverance?',
+                    hasChoice: true,
+                    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                    videoTitle: 'The Power of Perseverance'
+                }
+            ],
+            problemSolving: [
+                {
+                    speaker: 'nobita',
+                    text: 'Whenever I face a problem, I panic and don\'t know what to do. How should I approach difficult situations?'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'Problem solving is like solving a puzzle, Nobita. Break big problems into smaller pieces, think about different solutions, and don\'t be afraid to try new approaches.'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'Sometimes the answer isn\'t obvious at first, but with patience and creativity, you\'ll find it. Would you like to watch a video on problem-solving techniques?',
+                    hasChoice: true,
+                    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                    videoTitle: 'Problem Solving Skills'
+                }
+            ],
+            consciousness: [
+                {
+                    speaker: 'nobita',
+                    text: 'What does it mean to be conscious? Is it just about being awake and paying attention?'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'Being conscious means being aware of yourself and your surroundings, Nobita. It\'s understanding how your actions affect others and thinking before you act.'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'Conscious people make thoughtful decisions and take responsibility for what they do. Would you like to watch a video about self-awareness?',
+                    hasChoice: true,
+                    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                    videoTitle: 'Building Self-Awareness'
+                }
+            ],
+            innovativeness: [
+                {
+                    speaker: 'nobita',
+                    text: 'Everyone says I should be more creative and innovative. But how do I come up with new ideas?'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'Innovation is about thinking differently, Nobita. It\'s looking at old problems with fresh eyes and asking "what if we tried this instead?"'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'You don\'t have to invent something completely new. Sometimes innovation is just improving what already exists in clever ways. Would you like to watch a video about innovative thinking?',
+                    hasChoice: true,
+                    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                    videoTitle: 'Innovation Mindset'
+                }
+            ]
+        };
+
+        let currentConversation = null;
+        let currentMessageIndex = 0;
+        let isTyping = false; 
+        let choiceIsPending = false; 
+        let currentConceptPage = null; 
+
+        const nobitaImage = 'nobita.png'; 
+        const doraemonImage = 'doraemon.png'; 
+
+        // --- Audio setup: use Web Audio API to play a short pop/chime for each message ---
+        let audioCtx = null;
+        function playSound() {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = 'sine';
+                o.frequency.setValueAtTime(800, audioCtx.currentTime);
+                g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.05, audioCtx.currentTime + 0.001);
+                g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.18);
+                o.connect(g);
+                g.connect(audioCtx.destination);
+                o.start();
+                o.stop(audioCtx.currentTime + 0.2);
+            } catch (err) {
+                // Safari iOS may block auto AudioContext creation; fallback to a short <audio> beep if provided
+                // No fallback audio file provided in project; this catch prevents a crash.
+                console.warn('Audio play failed:', err);
+            }
+        }
+
+        // showMenu function is unchanged
+        function showMenu() {
+            document.getElementById('mainMenu').style.display = 'block';
+            document.querySelectorAll('.learning-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            if (currentConceptPage) {
+                currentConceptPage.onclick = null;
+                currentConceptPage = null;
+            }
+
+            currentConversation = null;
+            currentMessageIndex = 0;
+            choiceIsPending = false; 
+
+            // Show side characters when on the main menu
+            document.querySelectorAll('.side-character').forEach(el => el.style.display = 'block');
+        }
+
+        // typewriter function is unchanged
+        function typewriter(element, text, callback) {
+            let i = 0;
+            element.innerHTML = '';
+            isTyping = true;
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 25); 
+                } else {
+                    isTyping = false;
+                    if (callback) callback();
+                }
+            }
+            type();
+        }
+
+        // showConcept function is unchanged
+        function showConcept(concept) {
+            document.getElementById('mainMenu').style.display = 'none';
+            const pageId = concept + 'Page';
+            const page = document.getElementById(pageId); 
+            page.classList.add('active');
+            
+            if (currentConceptPage) {
+                currentConceptPage.onclick = null;
+            }
+            currentConceptPage = page; 
+
+            // Allow clicking the page (including the conversation area) to advance messages,
+            // but still prevent advancing while typing or when a choice is pending.
+            page.onclick = (e) => {
+                // If typing or waiting for a choice, ignore clicks
+                if (isTyping || choiceIsPending) return;
+
+                // If the click occurred on a real button (including choice buttons), ignore it
+                if (e.target.tagName === 'BUTTON' || e.target.closest('.choice-btn')) {
+                    return;
+                }
+
+                // Otherwise, advance the conversation. This allows clicks inside the
+                // conversation container to trigger nextMessage so Doraemon's reply appears.
+                nextMessage(concept);
+            };
+            
+            currentConversation = concept;
+            currentMessageIndex = 0;
+            choiceIsPending = false; 
+            
+            showMessage(concept);
+
+            // Hide side characters while viewing a concept
+            document.querySelectorAll('.side-character').forEach(el => el.style.display = 'none');
+        }
+
+        // showMessage function is unchanged
+        function showMessage(concept) {
+            if (!currentConversation || isTyping) return;
+
+            const convData = conversations[concept];
+            const convContainer = document.getElementById(concept + 'Conv');
+            const prevBtn = document.getElementById(concept + 'Prev');
+            const nextBtn = document.getElementById(concept + 'Next');
+            const hint = document.getElementById(concept + 'Hint');
+
+            convContainer.innerHTML = ''; 
+
+            const message = convData[currentMessageIndex];
+            choiceIsPending = !!message.hasChoice; 
+
+            // Disable nav while typing
+            if (prevBtn) prevBtn.disabled = true;
+            if (nextBtn) nextBtn.disabled = true;
+
+            // Hide/show prev/next according to position
+            if (prevBtn) prevBtn.classList.toggle('hidden', currentMessageIndex <= 0);
+            if (nextBtn) nextBtn.classList.toggle('hidden', currentMessageIndex >= convData.length - 1);
+
+            // hide hint while typing
+            if (hint) hint.style.display = 'none';
+
+            addMessage(convContainer, message, concept, () => {
+                // Called when typing completes
+                if (prevBtn) prevBtn.disabled = false;
+                if (nextBtn) nextBtn.disabled = false;
+
+                // Play sound
+                try { playSound(); } catch (e) { /* ignore audio errors */ }
+
+                // Show continue hint only when there is another message and no choice pending
+                if (hint) {
+                    if (!message.hasChoice && currentMessageIndex < convData.length - 1) {
+                        hint.style.display = 'block';
+                    } else {
+                        hint.style.display = 'none';
+                    }
+                }
+            });
+        }
+        
+        // nextMessage function is unchanged
+        function nextMessage(concept) {
+            if (isTyping) return;
+            const convData = conversations[concept];
+            if (currentMessageIndex < convData.length - 1) {
+                currentMessageIndex++;
+                showMessage(concept);
+            }
+        }
+
+        // prevMessage function is unchanged
+        function prevMessage(concept) {
+            if (isTyping) return;
+            if (currentMessageIndex > 0) {
+                currentMessageIndex--;
+                showMessage(concept);
+            }
+        }
+
+        // MODIFIED: addMessage now adds 'e' and 'e.stopPropagation()' to choice buttons
+        function addMessage(container, message, concept, onTypingComplete) {
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${message.speaker}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            const img = document.createElement('img');
+            img.src = message.speaker === 'nobita' ? nobitaImage : doraemonImage;
+            img.alt = message.speaker;
+            avatar.appendChild(img);
+
+            const messageBox = document.createElement('div');
+            messageBox.className = 'message-box';
+
+            const speakerName = document.createElement('div');
+            speakerName.className = 'speaker-name';
+            speakerName.textContent = message.speaker === 'nobita' ? 'Nobita:' : 'Doraemon:';
+
+            const messageText = document.createElement('div');
+            messageText.className = 'message-text';
+            
+            messageBox.appendChild(speakerName);
+            messageBox.appendChild(messageText);
+
+            if (message.speaker === 'nobita') {
+                bubble.appendChild(avatar);
+                bubble.appendChild(messageBox);
+            } else {
+                bubble.appendChild(messageBox);
+                bubble.appendChild(avatar);
+            }
+
+            container.appendChild(bubble);
+
+            typewriter(messageText, message.text, () => {
+                if (message.hasChoice) {
+                    const choiceDiv = document.createElement('div');
+                    choiceDiv.className = 'video-choice';
+
+                    const yesBtn = document.createElement('button');
+                    yesBtn.className = 'choice-btn';
+                    yesBtn.textContent = '👍 Yes, show me!';
+                    yesBtn.onclick = (e) => { // MODIFIED: Added 'e'
+                        e.stopPropagation(); // MODIFIED: Added this line
+                        choiceIsPending = false; 
+                        openVideo(message.videoUrl, message.videoTitle);
+                        choiceDiv.style.display = 'none';
+                        if (onTypingComplete) onTypingComplete(); 
+                    };
+
+                    const noBtn = document.createElement('button');
+                    noBtn.className = 'choice-btn no';
+                    noBtn.textContent = '👎 No, thanks';
+                    noBtn.onclick = (e) => { // MODIFIED: Added 'e'
+                        e.stopPropagation(); // MODIFIED: Added this line
+                        choiceIsPending = false; 
+                        choiceDiv.style.display = 'none';
+                        addThankYouMessage(container, concept, onTypingComplete);
+                    };
+
+                    choiceDiv.appendChild(yesBtn);
+                    choiceDiv.appendChild(noBtn);
+                    messageBox.appendChild(choiceDiv);
+                } else {
+                    if (onTypingComplete) onTypingComplete();
+                }
+            });
+
+
+            setTimeout(() => {
+                bubble.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        // addThankYouMessage function is unchanged
+        function addThankYouMessage(container, concept, callback) {
+            const message = {
+                speaker: 'doraemon',
+                text: 'No problem, Nobita! Remember, you can always come back and watch it later. Keep practicing what we discussed!'
+            };
+
+            setTimeout(() => {
+                addMessage(container, message, concept, callback);
+            }, 500);
+        }
+
+        // Modal functions are unchanged
+        function openVideo(url, title) {
+            document.getElementById('videoFrame').src = url;
+            document.getElementById('videoTitle').textContent = title;
+            document.getElementById('videoModal').classList.add('active');
+        }
+
+        function closeVideo() {
+            document.getElementById('videoModal').classList.remove('active');
+            document.getElementById('videoFrame').src = '';
+        }
+
+        document.getElementById('videoModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeVideo();
+            }
+        });
+
+        // Add delegated click handlers to conversation containers so clicks anywhere on a
+        // message bubble advance the dialogue (unless typing or a choice is pending).
+        ['initiative', 'perseverance', 'problemSolving', 'consciousness', 'innovativeness'].forEach(concept => {
+            const conv = document.getElementById(concept + 'Conv');
+            if (!conv) return;
+            conv.addEventListener('click', function (e) {
+                // If typing or waiting for choice, ignore
+                if (isTyping || choiceIsPending) return;
+
+                // If the click was on a button, ignore (buttons have their own handlers)
+                if (e.target.tagName === 'BUTTON' || e.target.closest('.choice-btn')) return;
+
+                // Otherwise advance the message for that concept
+                nextMessage(concept);
+            });
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeVideo();
+                return;
+            }
+
+            // Space or Enter advances the conversation when allowed
+            if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space' || e.key === 'Enter') {
+                if (currentConversation && !isTyping && !choiceIsPending) {
+                    e.preventDefault();
+                    nextMessage(currentConversation);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
