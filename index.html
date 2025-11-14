@@ -47,9 +47,20 @@
             display: block;
         }
         .concepts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            /* Use flex so items wrap naturally and each row can be centered independently.
+               With a fixed card width, this yields 3 items on the first row and 2 centered
+               on the second row for typical desktop widths. */
+            display: flex;
+            flex-wrap: wrap;
             gap: 25px;
+            justify-content: center; /* center rows when they don't fill the full width */
+            align-items: stretch;
+        }
+
+        /* Give each concept card a fixed basis so wrapping yields 3 + 2 layout on desktop */
+        .concept-card {
+            flex: 0 0 360px;
+            box-sizing: border-box;
         }
         .concept-card {
             background: white;
@@ -194,7 +205,8 @@
         .message-box {
             background: white;
             border: 3px solid #333; /* restored border */
-            padding: 6px 8px; /* reduced padding for denser layout */
+            /* top right bottom left */
+            padding: 6px 20px 6px 8px; /* increased right padding for end spacing */
             max-width: 70%;
             box-shadow: 4px 4px 0 #333; /* restored solid shadow */
             position: relative;
@@ -205,6 +217,7 @@
             color: #444;
             line-height: 1.5;
             font-size: 1.12em; /* increased for readability */
+            white-space: pre-wrap; /* respect newlines (\n) in message text */
         }
         .video-choice {
             margin-top: 15px;
@@ -344,8 +357,10 @@
                 font-size: 1.6em;
             }
             .concepts-grid {
-                grid-template-columns: 1fr;
+                /* On small screens, use a single column */
+                justify-content: center;
             }
+            .concept-card { flex: 0 0 100%; }
             .message-box {
                 max-width: 85%;
             }
@@ -373,7 +388,7 @@
         /* Large static side characters shown on main menu */
         .side-character {
             position: fixed;
-            bottom: 40px; /* partially off-screen */
+            bottom: 30px; /* partially off-screen */
             width: 540px; /* larger visual size */
             height: auto;
             pointer-events: none;
@@ -382,11 +397,11 @@
         }
         .side-character.left {
             left: 0;
-            transform: translateX(-10%);
+            transform: translateX(10%);
         }
         .side-character.right {
             right: 0;
-            transform: translateX(20%);
+            transform: translateX(0%);
         }
         @media (max-width: 1100px) {
             .side-character { display: none; }
@@ -416,30 +431,30 @@
 
         <div id="mainMenu" class="main-menu">
             <div class="concepts-grid">
-                <div class="concept-card" onclick="showConcept('initiative')">
+                <div class="concept-card" onclick="showConcept('innovativeness')">
                     <div class="concept-number">1</div>
+                    <h3>Innovativeness</h3>
+                    <p>Finding new and better ways to approach problems and opportunities</p>
+                </div>
+                <div class="concept-card" onclick="showConcept('initiative')">
+                    <div class="concept-number">2</div>
                     <h3>Taking Initiative</h3>
                     <p>Learning to be proactive and take the first step without waiting for others</p>
                 </div>
                 <div class="concept-card" onclick="showConcept('perseverance')">
-                    <div class="concept-number">2</div>
+                    <div class="concept-number">3</div>
                     <h3>Perseverance</h3>
                     <p>Building the strength to keep going even when things get difficult</p>
                 </div>
                 <div class="concept-card" onclick="showConcept('problemSolving')">
-                    <div class="concept-number">3</div>
+                    <div class="concept-number">4</div>
                     <h3>Problem Solving</h3>
                     <p>Developing skills to tackle challenges with creative thinking</p>
                 </div>
                 <div class="concept-card" onclick="showConcept('consciousness')">
-                    <div class="concept-number">4</div>
+                    <div class="concept-number">5</div>
                     <h3>Consciousness</h3>
                     <p>Being aware of yourself and understanding the impact of your actions</p>
-                </div>
-                <div class="concept-card" onclick="showConcept('innovativeness')">
-                    <div class="concept-number">5</div>
-                    <h3>Innovativeness</h3>
-                    <p>Finding new and better ways to approach problems and opportunities</p>
                 </div>
             </div>
         </div>
@@ -535,10 +550,22 @@
                     text: 'Taking initiative means being the person who acts first, Nobita. Instead of waiting for instructions, you see what needs to be done and you do it.'
                 },
                 {
+                    speaker: 'nobita',
+                    text: 'And how can I get better at that?'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'Overcome the fear of failure (reframe goals, reframe your story, visualize obstacles, and make plans to overcome them).\nApply risk-mitigation strategies (avoid, accept, transfer, limit).'
+                },
+                {
+                    speaker: 'nobita',
+                    text: 'Oooh, that sounds doable!'
+                },
+                {
                     speaker: 'doraemon',
                     text: 'It\'s about being proactive and creating opportunities rather than waiting for them to come to you. Would you like to watch a video to learn more about taking initiative?',
                     hasChoice: true,
-                    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', 
+                    videoUrl: 'https://www.youtube.com/embed/iRQytOBTlN8?si=iAOLolTC00O68SN5&t=124', 
                     videoTitle: 'Understanding Initiative'
                 }
             ],
@@ -549,13 +576,25 @@
                 },
                 {
                     speaker: 'doraemon',
-                    text: 'Perseverance is continuing despite difficulties, Nobita. Everyone faces obstacles, but those who succeed are the ones who refuse to quit.'
+                    text: 'Perseverance means continuing despite difficulties, Nobita. Everyone faces obstacles, but those who succeed are the ones who refuse to quit.'
+                },
+                {
+                    speaker: 'nobita',
+                    text: 'Are there any ways to practice it?'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'Use the Pyramid of Goals: set a top-level goal, then break it into mid-level and smaller steps.\nAlso, make your goals SMART—Specific, Measurable, Achievable, Relevant, and Time-bound. Completing small steps keeps you motivated.'
+                },
+                {
+                    speaker: 'nobita',
+                    text: 'Oooh, great idea!'
                 },
                 {
                     speaker: 'doraemon',
                     text: 'Remember, failure is just practice for success. Each time you fall down and get back up, you become stronger. Would you like to watch a video about perseverance?',
                     hasChoice: true,
-                    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                    videoUrl: 'https://www.youtube.com/embed/watch?v=TBUaiUaxlTs',
                     videoTitle: 'The Power of Perseverance'
                 }
             ],
@@ -566,13 +605,25 @@
                 },
                 {
                     speaker: 'doraemon',
-                    text: 'Problem solving is like solving a puzzle, Nobita. Break big problems into smaller pieces, think about different solutions, and don\'t be afraid to try new approaches.'
+                    text: 'Problem-solving is like solving a puzzle, Nobita. Break big problems into smaller pieces, think about different solutions, and don\'t be afraid to try new approaches.'
+                },
+                {
+                    speaker: 'nobita',
+                    text: 'Any tips or techniques to master it?'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'Try reverse brainstorming—think of ways to create the problem, then flip those ideas into solutions.\nAlso, ask "Why?" five times to find the root cause of a problem.'
+                },
+                {
+                    speaker: 'nobita',
+                    text: 'Oooh, that sounds interesting!'
                 },
                 {
                     speaker: 'doraemon',
                     text: 'Sometimes the answer isn\'t obvious at first, but with patience and creativity, you\'ll find it. Would you like to watch a video on problem-solving techniques?',
                     hasChoice: true,
-                    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                    videoUrl: 'https://www.youtube.com/embed/BCwREmgXDWM?feature=shared',
                     videoTitle: 'Problem Solving Skills'
                 }
             ],
@@ -583,13 +634,25 @@
                 },
                 {
                     speaker: 'doraemon',
-                    text: 'Being conscious means being aware of yourself and your surroundings, Nobita. It\'s understanding how your actions affect others and thinking before you act.'
+                    text: 'Being conscious means being aware of yourself and your surroundings, Nobita. It\'s about understanding how your actions affect others and thinking before you act.'
+                },
+                {
+                    speaker: 'nobita',
+                    text: 'How can I practice that every day?'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'Create a personal code of conduct—a set of rules to guide yourself. Check in daily to make sure you’re following it.'
+                },
+                {
+                    speaker: 'nobita',
+                    text: 'Oooh, that sounds interesting!'
                 },
                 {
                     speaker: 'doraemon',
                     text: 'Conscious people make thoughtful decisions and take responsibility for what they do. Would you like to watch a video about self-awareness?',
                     hasChoice: true,
-                    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                    videoUrl: 'https://www.youtube.com/embed/mvqWD7PpITw?si=o61CsY1cj6sy6IgC',
                     videoTitle: 'Building Self-Awareness'
                 }
             ],
@@ -600,13 +663,25 @@
                 },
                 {
                     speaker: 'doraemon',
-                    text: 'Innovation is about thinking differently, Nobita. It\'s looking at old problems with fresh eyes and asking "what if we tried this instead?"'
+                    text: 'Innovation is about thinking differently, Nobita. It\'s looking at old problems with fresh eyes and asking "What if we tried this instead?"'
+                },
+                {
+                    speaker: 'nobita',
+                    text: 'Are there any ways to practice it?'
+                },
+                {
+                    speaker: 'doraemon',
+                    text: 'You can try:\nSCAMPER — Substitute, Combine, Adapt, Modify, Put to another use, Eliminate, Reverse.\nOr practice Kaizen: make small improvements every day.\nChallenge your usual thinking with Assumption Reversal—ask, "What if I did the opposite?"'
+                },
+                {
+                    speaker: 'nobita',
+                    text: 'Oooh, that sounds interesting!'
                 },
                 {
                     speaker: 'doraemon',
                     text: 'You don\'t have to invent something completely new. Sometimes innovation is just improving what already exists in clever ways. Would you like to watch a video about innovative thinking?',
                     hasChoice: true,
-                    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                    videoUrl: 'https://www.youtube.com/embed/88NLqXZ-nck?si=4MVr7QVkFo8LhMrO',
                     videoTitle: 'Innovation Mindset'
                 }
             ]
@@ -667,14 +742,15 @@
         // typewriter function is unchanged
         function typewriter(element, text, callback) {
             let i = 0;
-            element.innerHTML = '';
+            // use textContent to avoid interpreting HTML and to preserve raw newlines
+            element.textContent = '';
             isTyping = true;
-            
+
             function type() {
                 if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
+                    element.textContent += text.charAt(i);
                     i++;
-                    setTimeout(type, 25); 
+                    setTimeout(type, 25);
                 } else {
                     isTyping = false;
                     if (callback) callback();
